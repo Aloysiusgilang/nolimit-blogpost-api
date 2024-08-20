@@ -5,6 +5,7 @@ import {
   DataType,
   ForeignKey,
   Sequelize,
+  BelongsTo,
 } from 'sequelize-typescript';
 import { User } from 'src/user/model/user.model';
 
@@ -29,4 +30,7 @@ export class Post extends Model {
   @ForeignKey(() => User)
   @Column(DataType.INTEGER)
   authorId: number;
+
+  @BelongsTo(() => User)
+  author: User;
 }

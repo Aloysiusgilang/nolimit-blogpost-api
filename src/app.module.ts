@@ -6,6 +6,7 @@ import { sequelizeConfig } from './sequelize.config';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { UserModule } from './user/user.module';
 import { PostModule } from './post/post.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { PostModule } from './post/post.module';
     SequelizeModule.forRoot(sequelizeConfig),
     UserModule,
     PostModule,
+    AuthModule,
   ],
   controllers: [],
   providers: [],
