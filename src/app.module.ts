@@ -1,10 +1,22 @@
+// Modules
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { ConfigModule } from '@nestjs/config';
+
+import { sequelizeConfig } from './sequelize.config';
+import { SequelizeModule } from '@nestjs/sequelize';
+import { UserModule } from './user/user.module';
+import { PostModule } from './post/post.module';
 
 @Module({
-  imports: [],
-  controllers: [AppController],
-  providers: [AppService],
+  imports: [
+    ConfigModule.forRoot({
+      envFilePath: '.env',
+    }),
+    SequelizeModule.forRoot(sequelizeConfig),
+    UserModule,
+    PostModule,
+  ],
+  controllers: [],
+  providers: [],
 })
 export class AppModule {}
