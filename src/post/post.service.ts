@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { InjectModel } from '@nestjs/sequelize';
@@ -11,23 +11,70 @@ export class PostService {
     private postModel: typeof Post,
   ) {}
 
-  create(createPostDto: CreatePostDto) {
-    return 'This action adds a new post';
-  }
-
   findAll() {
-    return `This action returns all post`;
+    return this.postModel.findAll();
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} post`;
+    return this.postModel.findOne({
+      where: {
+        id,
+      },
+    });
   }
 
-  update(id: number, updatePostDto: UpdatePostDto) {
-    return `This action updates a #${id} post`;
+  async create(userId: number, createPostDto: CreatePostDto): Promise<Post> {
+    const newPost = await this.postModel.create({
+      authorId: userId,
+      ...createPostDto,
+    });
+    return newPost;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} post`;
+  async update(
+    userId: number,
+    postId: number,
+    updatePostDto: UpdatePostDto,
+  ): Promise<Post> {
+    // get the associated post
+    const post = await this.findOne(postId);
+
+    // check if the post exists
+    if (!post) {
+      throw new BadRequestException('Post not found');
+    }
+
+    // check if the user is the author of the post
+    if (post.authorId !== userId) {
+      throw new BadRequestException('You are not the author of this post');
+    }
+
+    // update the post
+    await post.update({
+      ...updatePostDto,
+      updatedAt: new Date(),
+    });
+
+    return post;
+  }
+
+  async remove(userId: number, postId: number): Promise<Post> {
+    // get the associated post
+    const post = await this.findOne(postId);
+
+    // check if the post exists
+    if (!post) {
+      throw new BadRequestException('Post not found');
+    }
+
+    // check if the user is the author of the post
+    if (post.authorId !== userId) {
+      throw new BadRequestException('You are not the author of this post');
+    }
+
+    // update the post
+    await post.destroy();
+
+    return post;
   }
 }
