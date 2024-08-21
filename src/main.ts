@@ -12,7 +12,6 @@ async function bootstrap() {
     .setTitle('BlogPost REST API')
     .setDescription('Documentation for the BlogPost REST API')
     .setVersion('1.0')
-    .addTag('blogpost')
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
