@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
-// import { CreateUserDto } from './dto/create-user.dto';
-// import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './model/user.model';
 
 @Injectable()
@@ -29,10 +27,5 @@ export class UserService {
         email,
       },
     });
-  }
-
-  async remove(id: string): Promise<void> {
-    const user = await this.findOne(id);
-    await user.destroy();
   }
 }
