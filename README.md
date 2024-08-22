@@ -55,4 +55,5 @@ $ npm run start
 
 ## Authentication
 
-To access the authenticated endpoints (e.g., create, update, and delete posts), you must first log in and obtain a JWT token. Use this token as a Bearer token in the `Authorization` header of subsequent requests.
+- To access the authenticated endpoints (e.g., create, update, and delete posts), you must first log in and obtain a JWT token. Use this token as a Bearer token in the `Authorization` header of subsequent requests.
+- or create a new environment in postman and add new variable 'jwt_token', post-response script is already added to save the token in the environment variable
