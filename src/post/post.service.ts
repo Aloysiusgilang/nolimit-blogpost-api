@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, HttpStatus } from '@nestjs/common';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { InjectModel } from '@nestjs/sequelize';
@@ -23,19 +23,24 @@ export class PostService {
     });
   }
 
-  async create(userId: number, createPostDto: CreatePostDto): Promise<Post> {
+  async create(userId: number, createPostDto: CreatePostDto): Promise<any> {
     const newPost = await this.postModel.create({
       authorId: userId,
       ...createPostDto,
     });
-    return newPost;
+
+    return {
+      statusCode: HttpStatus.CREATED,
+      message: 'Post created successfully',
+      data: newPost,
+    };
   }
 
   async update(
     userId: number,
     postId: number,
     updatePostDto: UpdatePostDto,
-  ): Promise<Post> {
+  ): Promise<any> {
     // get the associated post
     const post = await this.findOne(postId);
 
@@ -55,10 +60,14 @@ export class PostService {
       updatedAt: new Date(),
     });
 
-    return post;
+    return {
+      statusCode: HttpStatus.OK,
+      message: 'Post updated successfully',
+      data: post,
+    };
   }
 
-  async remove(userId: number, postId: number): Promise<Post> {
+  async remove(userId: number, postId: number): Promise<any> {
     // get the associated post
     const post = await this.findOne(postId);
 
@@ -75,6 +84,9 @@ export class PostService {
     // update the post
     await post.destroy();
 
-    return post;
+    return {
+      statusCode: HttpStatus.NO_CONTENT,
+      message: 'Post deleted successfully',
+    };
   }
 }

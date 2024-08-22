@@ -2,9 +2,8 @@ import {
   BadRequestException,
   Injectable,
   UnauthorizedException,
+  HttpStatus,
 } from '@nestjs/common';
-// import { CreateAuthDto } from './dto/create-auth.dto';
-// import { UpdateAuthDto } from './dto/update-auth.dto';
 import { UserService } from '../user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
@@ -31,26 +30,38 @@ export class AuthService {
       throw new UnauthorizedException('Invalid email or password');
     }
 
+    // Create JWT payload and token
     const payload = { email: user.email, sub: user.id };
+    const accessToken = await this.jwtService.signAsync(payload);
+
     return {
-      access_token: await this.jwtService.signAsync(payload),
+      statusCode: HttpStatus.OK,
+      message: 'Login successful',
+      data: {
+        access_token: accessToken,
+      },
     };
   }
 
   async register(userData: CreateAuthDto) {
-    console.log(userData);
-    // if already exists, throw error
+    // Check if email already exists
     const existingUser = await this.userService.findOneByEmail(userData.email);
     if (existingUser) {
       throw new BadRequestException('Email already exists');
     }
 
-    // hash password and create user
+    // Hash password and create user
     const hashedPassword = await bcrypt.hash(userData.password, 10);
-    return User.create({
+    const newUser = await User.create({
       name: userData.name,
       email: userData.email,
       password: hashedPassword,
     });
+
+    return {
+      statusCode: HttpStatus.CREATED,
+      message: 'Registration successful',
+      data: newUser,
+    };
   }
 }
